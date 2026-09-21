@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>逆轉 BARIBARI REVERSE｜Standard 1v1 Simulator</title>
+<meta name="description" content="非官方的バリバコイン Standard 1v1 瀏覽器模擬器。" />
+<style>
+:root{color-scheme:dark;--bg:#090b0f;--panel:#15191f;--ink:#f6f7f9;--muted:#a7b0bb;--line:#2b3440;--gold:#ffd45f;--red:#df463f;--blue:#4b85d1;--green:#51c878}*{box-sizing:border-box}html,body{min-height:100%;overscroll-behavior-y:none}body{margin:0;background:radial-gradient(circle at 20% 0,#25252b 0,#10141a 34%,#07090c 78%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Noto Sans TC",sans-serif;color:var(--ink);padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}button,input{font:inherit}button{cursor:pointer;min-height:44px}.app{min-height:100dvh;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;padding:14px}.board-wrap{min-width:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0b0d11,#050608);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative}.board-wrap canvas{width:100%;height:100%;min-height:620px;touch-action:none}.side{display:flex;flex-direction:column;gap:12px}.card{background:rgba(21,25,31,.94);border:1px solid var(--line);border-radius:8px;padding:14px}.brand{font-weight:950;letter-spacing:.02em}.brand small{display:block;color:var(--muted);font-weight:650;margin-top:4px}.status{font-size:20px;font-weight:900}.sub{color:var(--muted);font-size:13px;line-height:1.5}.player{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line)}.player:first-of-type{border-top:0}.ox{font-variant-numeric:tabular-nums}.pill{padding:2px 8px;border-radius:999px;background:#242b35;color:#d6dde5;font-size:12px}.log{height:190px;overflow:auto;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;background:#0d1014;border:1px solid var(--line);border-radius:8px;padding:9px}.log div+div{margin-top:5px}.btn{border:1px solid #434e5c;background:#252c35;color:#fff;border-radius:8px;padding:10px 12px}.btn.primary{background:var(--gold);color:#111;border-color:var(--gold);font-weight:900}.btn.danger{background:#49201d;border-color:#753029}.row{display:flex;gap:8px;flex-wrap:wrap}.setup{position:fixed;inset:0;background:rgba(5,7,9,.9);backdrop-filter:blur(12px);z-index:10;display:grid;place-items:center;padding:20px}.setup.hidden{display:none}.setup-box{width:min(920px,96vw);max-height:92dvh;overflow:auto;background:#13171c;border:1px solid #333c47;border-radius:10px;padding:20px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:8px}.field label{font-size:12px;color:var(--muted)}input[type=text],input[type=number]{width:100%;background:#0d1014;color:#fff;border:1px solid #39424e;border-radius:8px;padding:10px}.coin-card{width:100%;text-align:left;background:#0d1014;border:1px solid #334050;border-radius:8px;color:#fff;padding:12px}.coin-card strong{font-size:16px}.coin-card-grid{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}.setup-step{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.hidden{display:none!important}.placement-banner{position:absolute;left:50%;top:16px;transform:translateX(-50%);background:rgba(16,19,24,.95);border:1px solid #4b5664;border-radius:8px;padding:10px 14px;font-weight:800;pointer-events:none}.confirm-placement{position:absolute;left:50%;bottom:16px;transform:translateX(-50%)}details summary{cursor:pointer;font-weight:800}.dev-grid{display:grid;grid-template-columns:1fr 88px;gap:8px;margin-top:9px;align-items:center}.dev-grid label{font-size:11px;color:var(--muted)}.dev-grid input{padding:5px}.footer{color:#737e8a;font-size:11px;line-height:1.5}.picker{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.54);display:flex;align-items:flex-end}.picker.hidden{display:none}.picker-sheet{width:100%;max-height:88dvh;background:#10151b;border-top:1px solid #3a4654;border-radius:14px 14px 0 0;padding:14px;box-shadow:0 -24px 60px rgba(0,0,0,.45);padding-bottom:max(14px,env(safe-area-inset-bottom))}.picker-head{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-bottom:10px}.chips{display:flex;gap:7px;overflow:auto;padding:2px 0 10px}.chip{white-space:nowrap;border:1px solid #445162;background:#1b222b;color:#dbe3ec;border-radius:999px;padding:8px 12px;min-height:38px}.chip.active{background:var(--gold);border-color:var(--gold);color:#111;font-weight:900}.picker-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:9px;overflow:auto;max-height:58dvh;padding-right:2px}.picker-coin{border:1px solid #323e4d;background:linear-gradient(180deg,#18202a,#0d1117);color:#fff;border-radius:8px;padding:10px;text-align:left}.picker-coin strong{display:block;font-size:15px}.picker-coin .values{margin-top:7px;font-variant-numeric:tabular-nums;color:#f4d46b}.picker-coin .set{margin-top:6px;color:#96a2af;font-size:11px;line-height:1.35}@media(max-width:900px){.app{grid-template-columns:1fr;padding:10px;gap:10px}.side{order:-1}.board-wrap canvas{min-height:58dvh}.grid2{grid-template-columns:1fr}.log{height:120px}.setup{padding:10px}.setup-box{max-height:94dvh}.picker-list{grid-template-columns:1fr 1fr;max-height:56dvh}}@media(max-width:420px){.picker-list{grid-template-columns:1fr}.brand small{font-size:12px}.status{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="board-wrap" id="boardWrap">
+    <canvas id="board"></canvas>
+    <div class="placement-banner hidden" id="placementBanner"></div>
+    <button class="btn primary confirm-placement hidden" id="confirmPlacement">確定</button>
+  </div>
+  <aside class="side">
+    <div class="card"><div class="brand">BARIBA SIM <small>Standard 1v1 · Hotseat</small></div></div>
+    <div class="card"><div class="status" id="status">準備中</div><div class="sub" id="hint">請完成對戰設定。</div></div>
+    <div class="card" id="playerCards"></div>
+    <div class="card"><strong>戰鬥紀錄</strong><div class="log" id="log"></div></div>
+    <details class="card"><summary>開發者面板</summary><div class="dev-grid" id="devGrid"></div><div class="row" style="margin-top:10px"><button class="btn" id="newSeed">新 Seed</button><button class="btn" id="restart">重新開始</button></div></details>
+    <div class="footer">非官方 fan simulator。硬幣圖像為程序繪製，不包含商品攝影。物理與翻面參數為模擬用估值。</div>
+  </aside>
+</div>
+
+<div class="setup" id="setup">
+  <div class="setup-box">
+    <h1 style="margin-top:0">Standard 1v1 對戰設定</h1>
+    <p class="sub">兩位玩家共用一個畫面。先選硬幣，再決定猜拳勝者、陣營與先攻。</p>
+    <div class="grid2">
+      <div class="field"><label>玩家 1 硬幣</label><button class="coin-card" id="coinPick0" type="button"></button></div>
+      <div class="field"><label>玩家 2 硬幣</label><button class="coin-card" id="coinPick1" type="button"></button></div>
+    </div>
+    <div class="setup-step">
+      <strong>1. 猜拳勝者</strong><div class="row" style="margin-top:8px"><button class="btn" data-janken="0">玩家 1</button><button class="btn" data-janken="1">玩家 2</button></div>
+      <div id="sideStep" class="hidden" style="margin-top:12px"><strong>2. 勝者選陣營</strong><div class="row" style="margin-top:8px"><button class="btn" data-side="order">ORDER（白）</button><button class="btn" data-side="xtreme">XTREME（黑）</button></div></div>
+      <div id="tossStep" class="hidden" style="margin-top:12px"><strong>3. コイントス</strong><p class="sub" id="tossInfo"></p><button class="btn primary" id="toss">旋轉硬幣決定先攻</button></div>
+      <div id="startStep" class="hidden" style="margin-top:12px"><p id="startInfo"></p><button class="btn primary" id="start">開始對戰</button></div>
+    </div>
+  </div>
+</div>
+<div class="picker hidden" id="coinPicker" aria-hidden="true">
+  <div class="picker-sheet" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+    <div class="picker-head"><strong id="pickerTitle">選擇硬幣</strong><button class="btn" id="closePicker" type="button">關閉</button></div>
+    <input id="pickerSearch" type="text" placeholder="搜尋名稱／稀有度／系列…" autocomplete="off">
+    <div class="chips" id="pickerFilters"></div>
+    <div class="picker-list" id="pickerList"></div>
+  </div>
+</div>
+<script type="module" src="./ui/ui.js"></script>
+</body>
+</html>

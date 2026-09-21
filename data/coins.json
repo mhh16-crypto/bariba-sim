@@ -1,0 +1,1420 @@
+[
+ {
+  "id": "第1転 ～秩序を統べる者たち～-RR-ニャルバン",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "RR",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 8000
+   }
+  },
+  "unverified": true
+ },
+ {
+  "id": "第1転 ～秩序を統べる者たち～-BBR-ニャルバン",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "BBR",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 7000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 7000
+   }
+  }
+ },
+ {
+  "id": "01a-c",
+  "name": "イグルス",
+  "variants": [],
+  "rarity": "BR",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "イグルスO",
+    "ox": 6000
+   },
+   "xtreme": {
+    "label": "イグルスX",
+    "ox": 6000
+   }
+  }
+ },
+ {
+  "id": "01a-d",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "R",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "01a-e",
+  "name": "ラビナ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ラビナO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "ラビナX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "01a-f",
+  "name": "ペギオン",
+  "variants": [],
+  "rarity": "R",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ペギオンO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "ペギオンX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "01a-g",
+  "name": "エルパオン",
+  "variants": [],
+  "rarity": "R",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "エルパオンO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "エルパオンX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "01a-h",
+  "name": "パピルーナ",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "パピルーナO",
+    "ox": 2000
+   },
+   "xtreme": {
+    "label": "パピルーナX",
+    "ox": 2000
+   }
+  }
+ },
+ {
+  "id": "01a-i",
+  "name": "イルフィン",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "イルフィンO",
+    "ox": 1500
+   },
+   "xtreme": {
+    "label": "イルフィンX",
+    "ox": 1500
+   }
+  }
+ },
+ {
+  "id": "01a-j",
+  "name": "コアミン",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "コアミンO",
+    "ox": 500
+   },
+   "xtreme": {
+    "label": "コアミンX",
+    "ox": 500
+   }
+  }
+ },
+ {
+  "id": "01a-k",
+  "name": "ケロット",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ケロットO",
+    "ox": 500
+   },
+   "xtreme": {
+    "label": "ケロットX",
+    "ox": 500
+   }
+  }
+ },
+ {
+  "id": "01a-l",
+  "name": "ホースター",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～秩序を統べる者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ホースターO",
+    "ox": 1000
+   },
+   "xtreme": {
+    "label": "ホースターX",
+    "ox": 1000
+   }
+  }
+ },
+ {
+  "id": "第1転 ～自由を求める者たち～-RR-ラッティー",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "RR",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 8000
+   }
+  },
+  "unverified": true
+ },
+ {
+  "id": "01b-b",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "BBR",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 7000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 7000
+   }
+  }
+ },
+ {
+  "id": "01b-c",
+  "name": "ガオルフ",
+  "variants": [],
+  "rarity": "BR",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ガオルフO",
+    "ox": 6000
+   },
+   "xtreme": {
+    "label": "ガオルフX",
+    "ox": 6000
+   }
+  }
+ },
+ {
+  "id": "01b-d",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "R",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "01b-e",
+  "name": "キュヴィ",
+  "variants": [
+   "キュビィ"
+  ],
+  "rarity": "R",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "キュヴィO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "キュヴィX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "01b-f",
+  "name": "オラバチ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "オラバチO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "オラバチX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "01b-g",
+  "name": "サイノス",
+  "variants": [],
+  "rarity": "R",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "サイノスO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "サイノスX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "01b-h",
+  "name": "ラミィ",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラミィO",
+    "ox": 500
+   },
+   "xtreme": {
+    "label": "ラミィX",
+    "ox": 500
+   }
+  }
+ },
+ {
+  "id": "01b-i",
+  "name": "ミラボル",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ミラボルO",
+    "ox": 500
+   },
+   "xtreme": {
+    "label": "ミラボルX",
+    "ox": 500
+   }
+  }
+ },
+ {
+  "id": "01b-j",
+  "name": "モモニン",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "モモニンO",
+    "ox": 1000
+   },
+   "xtreme": {
+    "label": "モモニンX",
+    "ox": 1000
+   }
+  }
+ },
+ {
+  "id": "01b-k",
+  "name": "ドリモグー",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ドリモグーO",
+    "ox": 2000
+   },
+   "xtreme": {
+    "label": "ドリモグーX",
+    "ox": 2000
+   }
+  }
+ },
+ {
+  "id": "01b-l",
+  "name": "チョトツ",
+  "variants": [],
+  "rarity": "C",
+  "set": "第1転 ～自由を求める者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "チョトツO",
+    "ox": 1500
+   },
+   "xtreme": {
+    "label": "チョトツX",
+    "ox": 1500
+   }
+  }
+ },
+ {
+  "id": "バリバインダー第1巻-BR-ペギオン",
+  "name": "ペギオン",
+  "variants": [],
+  "rarity": "BR",
+  "set": "バリバインダー第1巻",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ペギオンO",
+    "ox": 5500
+   },
+   "xtreme": {
+    "label": "ペギオンX",
+    "ox": 5500
+   }
+  }
+ },
+ {
+  "id": "バリバインダー第1巻-BR-オラバチ",
+  "name": "オラバチ",
+  "variants": [],
+  "rarity": "BR",
+  "set": "バリバインダー第1巻",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "オラバチO",
+    "ox": 5500
+   },
+   "xtreme": {
+    "label": "オラバチX",
+    "ox": 5500
+   }
+  }
+ },
+ {
+  "id": "コロコロ5月号付録-R-ラッティー",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "R",
+  "set": "コロコロ5月号付録",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "02a-b",
+  "name": "トライガー",
+  "variants": [],
+  "rarity": "BBR",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "トライガーO",
+    "ox": 7000
+   },
+   "xtreme": {
+    "label": "トライガーX",
+    "ox": 7000
+   }
+  }
+ },
+ {
+  "id": "02a-d",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "BR",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 5500
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 5500
+   }
+  }
+ },
+ {
+  "id": "02a-f",
+  "name": "ラビナ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ラビナO",
+    "ox": 4500
+   },
+   "xtreme": {
+    "label": "ラビナX",
+    "ox": 4500
+   }
+  }
+ },
+ {
+  "id": "02a-h",
+  "name": "イグルス",
+  "variants": [],
+  "rarity": "R",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "イグルスO",
+    "ox": 5500
+   },
+   "xtreme": {
+    "label": "イグルスX",
+    "ox": 5500
+   }
+  }
+ },
+ {
+  "id": "02a-j",
+  "name": "コアミン",
+  "variants": [],
+  "rarity": "R",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "コアミンO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "コアミンX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "02a-a",
+  "name": "ヒョードル",
+  "variants": [],
+  "rarity": "BBR",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ヒョードルO",
+    "ox": 7000
+   },
+   "xtreme": {
+    "label": "ヒョードルX",
+    "ox": 7000
+   }
+  }
+ },
+ {
+  "id": "02a-c",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "BR",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 5500
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 5500
+   }
+  }
+ },
+ {
+  "id": "02a-e",
+  "name": "キュヴィ",
+  "variants": [
+   "キュビィ"
+  ],
+  "rarity": "R",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "キュヴィO",
+    "ox": 4500
+   },
+   "xtreme": {
+    "label": "キュヴィX",
+    "ox": 4500
+   }
+  }
+ },
+ {
+  "id": "02a-g",
+  "name": "ドリモグー",
+  "variants": [],
+  "rarity": "R",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ドリモグーO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "ドリモグーX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "02a-i",
+  "name": "ガオルフ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第2転 ～表裏を司る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ガオルフO",
+    "ox": 5500
+   },
+   "xtreme": {
+    "label": "ガオルフX",
+    "ox": 5500
+   }
+  }
+ },
+ {
+  "id": "03a-a",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "BBR",
+  "set": "コインセット ～最強を誇る～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 6000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 6000
+   }
+  }
+ },
+ {
+  "id": "03a-b",
+  "name": "トライガー",
+  "variants": [],
+  "rarity": "C",
+  "set": "コインセット ～最強を誇る～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "トライガーO",
+    "ox": 2500
+   },
+   "xtreme": {
+    "label": "トライガーX",
+    "ox": 2500
+   }
+  }
+ },
+ {
+  "id": "03a-c",
+  "name": "イグルス",
+  "variants": [],
+  "rarity": "C",
+  "set": "コインセット ～最強を誇る～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "イグルスO",
+    "ox": 1500
+   },
+   "xtreme": {
+    "label": "イグルスX",
+    "ox": 1500
+   }
+  }
+ },
+ {
+  "id": "03b-a",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "BBR",
+  "set": "コインセット ～最凶を貪る～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 6000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 6000
+   }
+  }
+ },
+ {
+  "id": "03b-b",
+  "name": "ヒョードル",
+  "variants": [],
+  "rarity": "C",
+  "set": "コインセット ～最凶を貪る～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ヒョードルO",
+    "ox": 2500
+   },
+   "xtreme": {
+    "label": "ヒョードルX",
+    "ox": 2500
+   }
+  }
+ },
+ {
+  "id": "03b-c",
+  "name": "ガオルフ",
+  "variants": [],
+  "rarity": "C",
+  "set": "コインセット ～最凶を貪る～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ガオルフO",
+    "ox": 1500
+   },
+   "xtreme": {
+    "label": "ガオルフX",
+    "ox": 1500
+   }
+  }
+ },
+ {
+  "id": "03c-a",
+  "name": "レオウ",
+  "variants": [],
+  "rarity": "RR",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "レオウO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "レオウX",
+    "ox": 8000
+   }
+  },
+  "unverified": true
+ },
+ {
+  "id": "03c-b",
+  "name": "カブトル",
+  "variants": [],
+  "rarity": "BBR",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "カブトルO",
+    "ox": 9000
+   },
+   "xtreme": {
+    "label": "カブトルX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "03c-c",
+  "name": "レオウ",
+  "variants": [],
+  "rarity": "BR",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "レオウO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "レオウX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "03c-d",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 3500
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 3500
+   }
+  }
+ },
+ {
+  "id": "03c-e",
+  "name": "カブトル",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "カブトルO",
+    "ox": 7000
+   },
+   "xtreme": {
+    "label": "カブトルX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "03c-f",
+  "name": "クマッシブ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "クマッシブO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "クマッシブX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "03c-g",
+  "name": "トライガー",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "トライガーO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "トライガーX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "03c-h",
+  "name": "ビーター",
+  "variants": [
+   "ピーター"
+  ],
+  "rarity": "C",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ビーターO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "ビーターX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "03c-i",
+  "name": "アランブル",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "アランブルO",
+    "ox": 2000
+   },
+   "xtreme": {
+    "label": "アランブルX",
+    "ox": 2000
+   }
+  }
+ },
+ {
+  "id": "03c-j",
+  "name": "ジャブル",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ジャブルO",
+    "ox": 2500
+   },
+   "xtreme": {
+    "label": "ジャブルX",
+    "ox": 2500
+   }
+  }
+ },
+ {
+  "id": "03c-k",
+  "name": "ターチェ",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ターチェO",
+    "ox": 1000
+   },
+   "xtreme": {
+    "label": "ターチェX",
+    "ox": 1000
+   }
+  }
+ },
+ {
+  "id": "03c-l",
+  "name": "エルパオン",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最強を誇る者たち～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "エルパオンO",
+    "ox": 1500
+   },
+   "xtreme": {
+    "label": "エルパオンX",
+    "ox": 1500
+   }
+  }
+ },
+ {
+  "id": "03d-a",
+  "name": "カイザーク",
+  "variants": [],
+  "rarity": "RR",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "カイザークO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "カイザークX",
+    "ox": 8000
+   }
+  },
+  "unverified": true
+ },
+ {
+  "id": "03d-b",
+  "name": "ハサムネ",
+  "variants": [],
+  "rarity": "BBR",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ハサムネO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "ハサムネX",
+    "ox": 9000
+   }
+  }
+ },
+ {
+  "id": "03d-c",
+  "name": "カイザーク",
+  "variants": [],
+  "rarity": "BR",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "カイザークO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "カイザークX",
+    "ox": 8000
+   }
+  }
+ },
+ {
+  "id": "03d-d",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "R",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 3500
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 3500
+   }
+  }
+ },
+ {
+  "id": "03d-e",
+  "name": "ハサムネ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ハサムネO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "ハサムネX",
+    "ox": 7000
+   }
+  }
+ },
+ {
+  "id": "03d-f",
+  "name": "ワニキ",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ワニキO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "ワニキX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "03d-g",
+  "name": "ヒョードル",
+  "variants": [],
+  "rarity": "R",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ヒョードルO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "ヒョードルX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "03d-h",
+  "name": "ジェリル",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ジェリルO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "ジェリルX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "03d-i",
+  "name": "ソルーピオン",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ソルーピオンO",
+    "ox": 2000
+   },
+   "xtreme": {
+    "label": "ソルーピオンX",
+    "ox": 2000
+   }
+  }
+ },
+ {
+  "id": "03d-j",
+  "name": "コブランボー",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "コブランボーO",
+    "ox": 2500
+   },
+   "xtreme": {
+    "label": "コブランボーX",
+    "ox": 2500
+   }
+  }
+ },
+ {
+  "id": "03d-k",
+  "name": "アミラ",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "アミラO",
+    "ox": 1000
+   },
+   "xtreme": {
+    "label": "アミラX",
+    "ox": 1000
+   }
+  }
+ },
+ {
+  "id": "03d-l",
+  "name": "オラバチ",
+  "variants": [],
+  "rarity": "C",
+  "set": "第3転 ～最凶を貪る者たち～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "オラバチO",
+    "ox": 1500
+   },
+   "xtreme": {
+    "label": "オラバチX",
+    "ox": 1500
+   }
+  }
+ },
+ {
+  "id": "コロコロ8月号 / 店頭CP-R-ニャルバン",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "R",
+  "set": "コロコロ8月号 / 店頭CP",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "コミックス第1巻特装版-BKR-ニャルバン",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "BKR",
+  "set": "コミックス第1巻特装版",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 8000
+   }
+  }
+ },
+ {
+  "id": "コロコロ8月号 / 店頭CP-R-ラッティー",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "R",
+  "set": "コロコロ8月号 / 店頭CP",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "コミックス第1巻特装版-BKR-ラッティー",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "BKR",
+  "set": "コミックス第1巻特装版",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 8000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 8000
+   }
+  }
+ },
+ {
+  "id": "l6081-a",
+  "name": "ニャルバン",
+  "variants": [],
+  "rarity": "BR",
+  "set": "コロフェス2026 ～まじめななつやすみ～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "ニャルバンO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "ニャルバンX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "l6081-b",
+  "name": "クマッシブ",
+  "variants": [],
+  "rarity": "R",
+  "set": "コロフェス2026 ～まじめななつやすみ～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "クマッシブO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "クマッシブX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "l6081-c",
+  "name": "カブトル",
+  "variants": [],
+  "rarity": "R",
+  "set": "コロフェス2026 ～まじめななつやすみ～",
+  "mainSide": "order",
+  "faces": {
+   "order": {
+    "label": "カブトルO",
+    "ox": 7000
+   },
+   "xtreme": {
+    "label": "カブトルX",
+    "ox": 3000
+   }
+  }
+ },
+ {
+  "id": "l6082-a",
+  "name": "ラッティー",
+  "variants": [
+   "ラッティ"
+  ],
+  "rarity": "BR",
+  "set": "コロフェス2026 ～じゆうななつやすみ～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ラッティーO",
+    "ox": 5000
+   },
+   "xtreme": {
+    "label": "ラッティーX",
+    "ox": 5000
+   }
+  }
+ },
+ {
+  "id": "l6082-b",
+  "name": "ワニキ",
+  "variants": [],
+  "rarity": "R",
+  "set": "コロフェス2026 ～じゆうななつやすみ～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "ワニキO",
+    "ox": 4000
+   },
+   "xtreme": {
+    "label": "ワニキX",
+    "ox": 4000
+   }
+  }
+ },
+ {
+  "id": "l6082-c",
+  "name": "キュヴィ",
+  "variants": [
+   "キュビィ"
+  ],
+  "rarity": "R",
+  "set": "コロフェス2026 ～じゆうななつやすみ～",
+  "mainSide": "xtreme",
+  "faces": {
+   "order": {
+    "label": "キュヴィO",
+    "ox": 3000
+   },
+   "xtreme": {
+    "label": "キュヴィX",
+    "ox": 3000
+   }
+  }
+ }
+]
