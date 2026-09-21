@@ -50,7 +50,7 @@ test('ids are unique', () => {
   assert.equal(new Set(coins.map(c => c.id)).size, coins.length);
 });
 
-import { other, attackOX, defenceOX, isMeta, makeCoin } from '../engine/coins.js';
+import { other, attackOX, defenceOX, isMeta, makeCoin, deckOX, deckTotal } from '../engine/coins.js';
 
 const leo = coins.find(c => c.name === 'レオウ' && c.rarity === 'BR');
 const flat = coins.find(c => c.name === 'ニャルバン' && c.rarity === 'BBR' && c.set.includes('第1転'));
@@ -91,4 +91,18 @@ test('a fresh coin is set, alive, and showing its own colour', () => {
   assert.equal(c.ringUp, 'order');
   assert.equal(c.alive, true);
   assert.equal(c.vx, 0);
+});
+
+test('Expert deck cost uses M (the mean of both faces) for meta coins', () => {
+  assert.equal(deckOX(leo), 6000);
+  assert.equal(deckOX(flat), 7000);
+});
+
+test('Expert deck total sums all three selected coins', () => {
+  const deck = [
+    coins.find(c => c.name === 'ニャルバン' && c.rarity === 'R' && c.set.includes('第1転')),
+    coins.find(c => c.name === 'ラビナ' && c.rarity === 'R' && c.set.includes('第1転')),
+    coins.find(c => c.name === 'イグルス' && c.rarity === 'BR' && c.set.includes('第1転')),
+  ];
+  assert.equal(deckTotal(deck), 15000);
 });

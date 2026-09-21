@@ -54,13 +54,16 @@ export const PHASE = Object.freeze({ AIM: 'AIM', PLACEMENT: 'PLACEMENT', GAME_OV
 
 export function newMatch({ defs, sides, first }) {
   const cx = C.FIELD_W / 2, cy = C.FIELD_H / 2, half = C.START_SEPARATION / 2;
-  // p0 sits at -y and faces +y, switch to its right (+x). p1 mirrors it.
-  const coins = [
-    makeCoin(defs[0], 0, sides[0], cx, cy - half, 0),
-    makeCoin(defs[1], 1, sides[1], cx, cy + half, Math.PI),
-  ];
+  const decks = Array.isArray(defs[0]) ? defs : [[defs[0]], [defs[1]]];
+  const teamSpacing = 4 * C.COIN_RADIUS;
+  const coins = decks.flatMap((deck, owner) => {
+    const y = owner === 0 ? cy - half : cy + half;
+    const theta = owner === 0 ? 0 : Math.PI;
+    const left = cx - ((deck.length - 1) * teamSpacing) / 2;
+    return deck.map((def, index) => makeCoin(def, owner, sides[owner], left + index * teamSpacing, y, theta));
+  });
   return { world: { coins, t: 0, restCount: 0, events: [] },
-           turn: first, phase: PHASE.AIM, pendingPlacements: [], log: [], winner: null };
+           decks, turn: first, phase: PHASE.AIM, pendingPlacements: [], log: [], winner: null };
 }
 
 export function beginShot(match, { coinIndex, vx, vy }) {

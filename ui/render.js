@@ -66,15 +66,15 @@ export function drawCoin(ctx, view, coin, { dim = false, selected = false } = {}
   ctx.strokeStyle = coin.core === 'released' ? '#f0c33c' : '#111820';
   ctx.lineWidth = coin.core === 'released' ? 2.5 : 1.2; ctx.stroke();
 
-  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.font = `700 ${Math.max(8, r * .25)}px system-ui,sans-serif`;
-  ctx.fillText(face.label, 0, -r * .10);
-  ctx.font = `900 ${Math.max(10, r * .38)}px system-ui,sans-serif`;
-  ctx.fillText(String(face.ox), 0, r * .30);
-  ctx.font = `700 ${Math.max(7, r * .20)}px system-ui,sans-serif`;
-  ctx.fillText(coin.def.rarity, -r * .42, -r * .42);
-  if (coin.def.faces.order.ox !== coin.def.faces.xtreme.ox) {
-    ctx.fillStyle = '#f4cf48'; ctx.fillText('M', r * .42, -r * .42);
+  if (r >= 11) {
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = `900 ${Math.max(7, r * .38)}px system-ui,sans-serif`;
+    ctx.fillText(String(face.ox), 0, r * .14);
+    ctx.font = `700 ${Math.max(6, r * .2)}px system-ui,sans-serif`;
+    ctx.fillText(coin.def.rarity, -r * .38, -r * .38);
+    if (coin.def.faces.order.ox !== coin.def.faces.xtreme.ox) {
+      ctx.fillStyle = '#f4cf48'; ctx.fillText('M', r * .38, -r * .38);
+    }
   }
 
   ctx.restore();

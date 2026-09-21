@@ -1,6 +1,6 @@
 import { C, FLIP } from '../engine/constants.js';
 import { makeRng } from '../engine/rng.js';
-import { attackOX, defenceOX } from '../engine/coins.js';
+import { attackOX, defenceOX, deckTotal } from '../engine/coins.js';
 import { stepWorld, atRest } from '../engine/physics.js';
 import { newMatch, beginShot, finishShot, applyPlacement, canRelocate, PHASE, OUT, SAFE_NONE, SAFE_RESET, SAFE_RELOCATE } from '../engine/rules.js';
 import { drawField, drawCoin, drawAim, drawRelocateExclusions, drawFacingGuide, worldPoint, screenX, screenY } from './render.js';
@@ -27,10 +27,12 @@ let match = null;
 let view = { scale: 1, ox: 0, oy: 0 };
 let drag = null;
 let animating = false;
+let animationFrameId = null;
+let animationGeneration = 0;
 let placementDraft = null;
 let setupState = { janken: null, winnerSide: null, sides: null, first: null };
-let selectedCoins = [0, 12];
-let pickerState = { player: null, query: '', rarity: 'ALL' };
+let selectedCoins = [[3, 4, 2], [15, 16, 14]];
+let pickerState = { player: null, slot: null, query: '', rarity: 'ALL' };
 
 function coinLabel(c) {
   const split = c.faces.order.ox === c.faces.xtreme.ox ? `${c.faces.order.ox}` : `O ${c.faces.order.ox} / X ${c.faces.xtreme.ox}`;
@@ -41,7 +43,25 @@ function coinCardHtml(c) {
   return `<div class="coin-card-grid"><div><strong>${c.rarity} ${c.name}</strong>${meta ? ' <span class="pill">META</span>' : ''}<br><span class="sub">${c.set}</span></div><div class="ox">O <strong>${c.faces.order.ox}</strong><br>X <strong>${c.faces.xtreme.ox}</strong></div></div>`;
 }
 function renderSelectedCoins() {
-  for (const i of [0, 1]) $(`#coinPick${i}`).innerHTML = coinCardHtml(coinDefs[selectedCoins[i]]);
+  for (const player of [0, 1]) {
+    $(`#deck${player}`).innerHTML = selectedCoins[player].map((coinIndex, slot) =>
+      `<button class="coin-card" data-player="${player}" data-slot="${slot}" type="button" aria-label="玩家 ${player + 1} 第 ${slot + 1} 顆硬幣">${coinCardHtml(coinDefs[coinIndex])}</button>`
+    ).join('');
+    const total = deckTotal(selectedCoins[player].map(i => coinDefs[i]));
+    const totalEl = $(`#deckTotal${player}`);
+    totalEl.textContent = `Deck OX ${total.toLocaleString()} / 15,000`;
+    totalEl.classList.toggle('invalid', total > 15000);
+  }
+  updateStartAvailability();
+}
+
+function decksAreValid() {
+  return selectedCoins.every(deck => deck.length === 3 && deckTotal(deck.map(i => coinDefs[i])) <= 15000);
+}
+
+function updateStartAvailability() {
+  const start = $('#start');
+  if (start) start.disabled = !decksAreValid();
 }
 function renderFilters() {
   const filters = ['ALL', 'META', 'RR', 'BBR', 'BR', 'R', 'C'];
@@ -62,10 +82,10 @@ function renderPicker() {
     return `<button class="picker-coin" data-coin-index="${i}" type="button"><strong>${c.rarity} ${c.name}${meta ? ' · META' : ''}</strong><div class="values">ORDER ${c.faces.order.ox} ／ XTREME ${c.faces.xtreme.ox}</div><div class="set">${c.set}</div></button>`;
   }).join('') || '<div class="sub">沒有符合條件的硬幣。</div>';
 }
-function openPicker(player) {
-  pickerState = { player, query: '', rarity: 'ALL' };
+function openPicker(player, slot) {
+  pickerState = { player, slot, query: '', rarity: 'ALL' };
   pickerSearch.value = '';
-  $('#pickerTitle').textContent = `玩家 ${player + 1} 選擇硬幣`;
+  $('#pickerTitle').textContent = `玩家 ${player + 1} · 第 ${slot + 1} 顆硬幣`;
   renderPicker();
   pickerEl.classList.remove('hidden');
   pickerEl.setAttribute('aria-hidden', 'false');
@@ -75,8 +95,12 @@ function closePicker() {
   pickerEl.classList.add('hidden');
   pickerEl.setAttribute('aria-hidden', 'true');
   pickerState.player = null;
+  pickerState.slot = null;
 }
-for (const i of [0, 1]) $(`#coinPick${i}`).addEventListener('click', () => openPicker(i));
+for (const player of [0, 1]) $(`#deck${player}`).addEventListener('click', ev => {
+  const btn = ev.target.closest('[data-slot]');
+  if (btn) openPicker(player, Number(btn.dataset.slot));
+});
 $('#closePicker').addEventListener('click', closePicker);
 pickerEl.addEventListener('click', ev => { if (ev.target === pickerEl) closePicker(); });
 pickerSearch.addEventListener('input', ev => { pickerState.query = ev.target.value; renderPicker(); });
@@ -88,8 +112,8 @@ pickerFilters.addEventListener('click', ev => {
 });
 pickerList.addEventListener('click', ev => {
   const btn = ev.target.closest('[data-coin-index]');
-  if (!btn || pickerState.player == null) return;
-  selectedCoins[pickerState.player] = Number(btn.dataset.coinIndex);
+  if (!btn || pickerState.player == null || pickerState.slot == null) return;
+  selectedCoins[pickerState.player][pickerState.slot] = Number(btn.dataset.coinIndex);
   renderSelectedCoins();
   closePicker();
 });
@@ -119,7 +143,8 @@ $('#start').addEventListener('click', startMatch);
 
 function startMatch() {
   if (!setupState.sides || setupState.first == null) return;
-  const defs = [coinDefs[selectedCoins[0]], coinDefs[selectedCoins[1]]];
+  if (!decksAreValid()) return;
+  const defs = selectedCoins.map(deck => deck.map(index => coinDefs[index]));
   match = newMatch({ defs, sides: setupState.sides, first: setupState.first });
   rng = makeRng(seed);
   logEl.innerHTML = '';
@@ -129,6 +154,9 @@ function startMatch() {
 }
 
 function resetSetupFlow({ newSeed = false } = {}) {
+  animationGeneration++;
+  if (animationFrameId != null) cancelAnimationFrame(animationFrameId);
+  animationFrameId = null;
   if (newSeed) seed = (Math.random() * 2 ** 32) >>> 0;
   rng = makeRng(seed);
   match = null;
@@ -142,6 +170,7 @@ function resetSetupFlow({ newSeed = false } = {}) {
   $('#tossStep').classList.add('hidden');
   $('#startStep').classList.add('hidden');
   document.querySelectorAll('[data-janken],[data-side]').forEach(x => x.classList.remove('primary'));
+  renderSelectedCoins();
   updatePlacementUi();
   updateHud();
   draw();
@@ -193,7 +222,12 @@ function updateHud() {
     statusEl.textContent = `玩家 ${match.turn+1} 的回合`;
     hintEl.textContent = '從自己的硬幣往後拖曳再放開。射擊方向與拖曳方向相反。';
   }
-  playerCards.innerHTML = match.world.coins.map(c=>`<div class="player"><div><strong>玩家 ${c.owner+1}</strong> · ${c.def.rarity} ${c.def.name}<br><span class="sub">${c.side.toUpperCase()} · ${c.alive?'存活':'OUT'}</span></div><div class="ox">ATK <strong>${attackOX(c)}</strong><br>DEF <strong>${defenceOX(c)}</strong></div></div>`).join('');
+  playerCards.innerHTML = [0, 1].map(owner => {
+    const coins = match.world.coins.filter(c => c.owner === owner);
+    const alive = coins.filter(c => c.alive).length;
+    const rows = coins.map(c=>`<div class="player ${c.alive ? '' : 'out'}"><div><strong>${c.def.rarity} ${c.def.name}</strong><br><span class="sub">${c.side.toUpperCase()} · ${c.alive?'存活':'OUT'}</span></div><div class="ox">ATK <strong>${attackOX(c)}</strong><br>DEF <strong>${defenceOX(c)}</strong></div></div>`).join('');
+    return `<section class="team p${owner + 1}"><div class="team-head"><span>玩家 ${owner + 1}</span><span>${alive} / 3</span></div>${rows}</section>`;
+  }).join('');
   updatePlacementUi();
 }
 
@@ -238,6 +272,10 @@ canvas.addEventListener('pointermove', ev=>{
     draw();
   } else if (match.phase===PHASE.PLACEMENT && placementDraft?.stage==='face') { setFacingFromPointer(currentPlacement().coin,p); draw(); }
 });
+function releasePointer(ev) {
+  if (canvas.hasPointerCapture?.(ev.pointerId)) canvas.releasePointerCapture(ev.pointerId);
+}
+
 canvas.addEventListener('pointerup', ev=>{
   if (!match || animating) return;
   const p=pointerPos(ev);
@@ -250,21 +288,39 @@ canvas.addEventListener('pointerup', ev=>{
   } else if (drag?.mode==='move') { drag=null; draw(); updatePlacementUi(); }
 });
 
+function cancelPointer(ev) {
+  releasePointer(ev);
+  drag = null;
+  draw();
+  updatePlacementUi();
+}
+canvas.addEventListener('pointercancel', cancelPointer);
+canvas.addEventListener('lostpointercapture', () => {
+  if (drag) { drag = null; draw(); updatePlacementUi(); }
+});
+boardWrap.addEventListener('touchmove', ev => ev.preventDefault(), { passive: false });
+for (const eventName of ['gesturestart', 'gesturechange', 'gestureend']) {
+  boardWrap.addEventListener(eventName, ev => ev.preventDefault(), { passive: false });
+}
+
 function shoot(coin,vx,vy){
   const idx=match.world.coins.indexOf(coin); const shooter=beginShot(match,{coinIndex:idx,vx,vy});
+  const generation = animationGeneration;
   animating=true; updateHud();
   let last=performance.now(),acc=0;
   function frame(now){
+    if (generation !== animationGeneration || !match) return;
     acc+=Math.min(.05,(now-last)/1000); last=now;
     while(acc>=C.DT && !atRest(match.world) && match.world.t<C.MAX_SIM_SECONDS){stepWorld(match.world,rng);acc-=C.DT;}
     draw();
     if(atRest(match.world)||match.world.t>=C.MAX_SIM_SECONDS){
       if(match.world.t>=C.MAX_SIM_SECONDS){for(const c of match.world.coins){c.vx=0;c.vy=0;c.omega=0;} addLog('模擬達到時間上限，強制結束移動');}
+      animationFrameId=null;
       const out=finishShot(match,shooter); animating=false; logResolution(shooter,out.resolutions,out.events);
       if(match.phase===PHASE.PLACEMENT) enterPlacement(); updateHud(); draw();
-    }else requestAnimationFrame(frame);
+    }else animationFrameId=requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  animationFrameId=requestAnimationFrame(frame);
 }
 
 function currentPlacement(){ return match?.pendingPlacements?.[0] ?? null; }
@@ -318,5 +374,6 @@ function buildDev(){
 buildDev();
 $('#newSeed').addEventListener('click',()=>{seed=(Math.random()*2**32)>>>0;rng=makeRng(seed);addLog(`Seed → ${seed}`);});
 $('#restart').addEventListener('click',()=>resetSetupFlow());
+$('#quickRestart').addEventListener('click',()=>resetSetupFlow());
 
 updateHud(); resize();

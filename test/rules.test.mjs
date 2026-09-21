@@ -214,3 +214,48 @@ test('SAFE_RESET placement origin is the position before the shot, not the resti
   const placement = out.placements.find(p => p.coin === target);
   assert.deepEqual(placement.origin, original);
 });
+
+const mkExpert = () => newMatch({
+  defs: [[flat(5000), flat(4000), flat(3000)], [flat(5000), flat(4000), flat(3000)]],
+  sides: ['order', 'xtreme'],
+  first: 0,
+});
+
+test('Expert 3v3 starts three coins per player with legal team spacing', () => {
+  const m = mkExpert();
+  assert.equal(m.world.coins.length, 6);
+  for (const owner of [0, 1]) {
+    const team = m.world.coins.filter(c => c.owner === owner);
+    assert.equal(team.length, 3);
+    assert.ok(Math.abs(team[1].x - team[0].x - 4 * C.COIN_RADIUS) < 1e-9);
+    assert.ok(Math.abs(team[2].x - team[1].x - 4 * C.COIN_RADIUS) < 1e-9);
+  }
+  const p0 = m.world.coins.filter(c => c.owner === 0);
+  const p1 = m.world.coins.filter(c => c.owner === 1);
+  for (let i = 0; i < 3; i++) {
+    assert.ok(Math.abs(p1[i].y - p0[i].y - C.START_SEPARATION) < 1e-9);
+  }
+});
+
+test('Expert turn may shoot any living coin owned by the active player', () => {
+  const m = mkExpert();
+  const secondOwnCoin = m.world.coins.findIndex((c, i) => c.owner === 0 && i > 0);
+  assert.doesNotThrow(() => beginShot(m, { coinIndex: secondOwnCoin, vx: 10, vy: 0 }));
+});
+
+test('Expert match ends only after every opponent coin is out', () => {
+  const m = mkExpert();
+  const opponents = m.world.coins.filter(c => c.owner === 1);
+  opponents[0].alive = false;
+  opponents[1].alive = false;
+  const shooter = beginShot(m, { coinIndex: 0, vx: 0, vy: 0 });
+  finishShot(m, shooter);
+  assert.notEqual(m.phase, PHASE.GAME_OVER);
+
+  const m2 = mkExpert();
+  for (const c of m2.world.coins.filter(c => c.owner === 1)) c.alive = false;
+  const shooter2 = beginShot(m2, { coinIndex: 0, vx: 0, vy: 0 });
+  const out = finishShot(m2, shooter2);
+  assert.equal(out.winner, 0);
+  assert.equal(m2.phase, PHASE.GAME_OVER);
+});

@@ -11,6 +11,10 @@ export const defenceOX = coin => coin.def.faces[other(coin.side)].ox;
 
 export const isMeta = def => def.faces.order.ox !== def.faces.xtreme.ox;
 
+export const deckOX = def => (def.faces.order.ox + def.faces.xtreme.ox) / 2;
+
+export const deckTotal = defs => defs.reduce((sum, def) => sum + deckOX(def), 0);
+
 export function makeCoin(def, owner, side, x, y, theta) {
   return {
     def, owner, side,
