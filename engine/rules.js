@@ -11,7 +11,7 @@ export const oxBattle = (attack, defence) => (attack > defence ? OUT : SAFE_RESE
 
 const isFlipped = coin => coin.ringUp !== coin.side;
 
-export function resolveCoin({ coin, shooter, isShooter, inField }) {
+export function resolveCoin({ coin, shooter, isShooter, inField, attackerEligible = true }) {
   if (isShooter) {
     // 自爆 — never an OX battle, in either direction.
     if (!inField) return OUT;
@@ -24,25 +24,37 @@ export function resolveCoin({ coin, shooter, isShooter, inField }) {
   if (!inField) {
     if (coin.core === 'set') return SAFE_RELOCATE;
     if (isFlipped(coin)) return OUT;
+    if (!attackerEligible) return SAFE_RELOCATE;
     return oxBattle(attackOX(shooter), defenceOX(coin)) === OUT ? OUT : SAFE_RELOCATE;
   }
   if (coin.core === 'set') return SAFE_NONE;
   if (isFlipped(coin)) return OUT;
+  if (!attackerEligible) return SAFE_RESET;
   return oxBattle(attackOX(shooter), defenceOX(coin));
 }
 
 export function resolveTurn({ coins, shooter, inFieldFn }) {
-  return coins
-    .filter(c => c.alive)
-    .map(coin => ({
-      coin,
-      result: resolveCoin({
-        coin,
-        shooter,
-        isShooter: coin.owner === shooter.owner,
-        inField: inFieldFn(coin),
-      }),
-    }));
+  const aliveCoins = coins.filter(c => c.alive);
+  const shooterResult = resolveCoin({
+    coin: shooter,
+    shooter,
+    isShooter: true,
+    inField: inFieldFn(shooter),
+  });
+  const attackerEligible = shooterResult !== OUT;
+
+  return aliveCoins.map(coin => ({
+    coin,
+    result: coin === shooter
+      ? shooterResult
+      : resolveCoin({
+          coin,
+          shooter,
+          isShooter: coin.owner === shooter.owner,
+          inField: inFieldFn(coin),
+          attackerEligible,
+        }),
+  }));
 }
 
 // engine/rules.js — match state machine (Task 8)

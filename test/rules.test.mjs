@@ -142,6 +142,37 @@ test('16 · resolveTurn pairs each alive coin with its result and drops dead one
   assert.equal(results.find(r => r.coin === dead), undefined);
 });
 
+test('17 · a self-destructing shooter cannot initiate an OX battle', () => {
+  const shooter = Object.assign(shot(9000), { core: 'released', ringUp: 'xtreme' });
+  const target = coin(500, 'xtreme', { core: 'released' });
+
+  const results = resolveTurn({ coins: [shooter, target], shooter, inFieldFn: () => true });
+
+  assert.deepEqual(results.map(({ result }) => result), [OUT, SAFE_RESET]);
+});
+
+test('18 · shooter self-destruct does not protect an opponent that also flipped', () => {
+  const shooter = Object.assign(shot(9000), { core: 'released', ringUp: 'xtreme' });
+  const target = coin(500, 'xtreme', { core: 'released', ringUp: 'order' });
+
+  const results = resolveTurn({ coins: [shooter, target], shooter, inFieldFn: () => true });
+
+  assert.deepEqual(results.map(({ result }) => result), [OUT, OUT]);
+});
+
+test('19 · a self-destructing shooter cannot OX an unflipped opponent off the field', () => {
+  const shooter = Object.assign(shot(9000), { core: 'released', ringUp: 'xtreme' });
+  const target = coin(500, 'xtreme', { core: 'released' });
+
+  const results = resolveTurn({
+    coins: [shooter, target],
+    shooter,
+    inFieldFn: c => c === shooter,
+  });
+
+  assert.deepEqual(results.map(({ result }) => result), [OUT, SAFE_RELOCATE]);
+});
+
 import { newMatch, takeShot, beginShot, finishShot, applyPlacement, PHASE } from '../engine/rules.js';
 import { makeRng } from '../engine/rng.js';
 import { C } from '../engine/constants.js';
@@ -258,4 +289,24 @@ test('Expert match ends only after every opponent coin is out', () => {
   const out = finishShot(m2, shooter2);
   assert.equal(out.winner, 0);
   assert.equal(m2.phase, PHASE.GAME_OVER);
+});
+
+test('Expert resolves every flipped coin in one simultaneous batch', () => {
+  const m = mkExpert();
+  const own = m.world.coins.filter(c => c.owner === 0);
+  const opponents = m.world.coins.filter(c => c.owner === 1);
+  const shooterIndex = m.world.coins.indexOf(own[0]);
+  const shooter = beginShot(m, { coinIndex: shooterIndex, vx: 0, vy: 0 });
+
+  Object.assign(own[1], { core: 'released', ringUp: 'xtreme' });
+  for (const c of opponents) Object.assign(c, { core: 'released', ringUp: 'order' });
+
+  const out = finishShot(m, shooter);
+
+  assert.equal(own[0].alive, true);
+  assert.equal(own[1].alive, false);
+  assert.equal(own[2].alive, true);
+  assert.ok(opponents.every(c => !c.alive));
+  assert.equal(out.winner, 0);
+  assert.equal(m.phase, PHASE.GAME_OVER);
 });
