@@ -4,13 +4,14 @@ import { attackOX, defenceOX, deckTotal } from '../engine/coins.js';
 import { stepWorld, atRest } from '../engine/physics.js';
 import { newMatch, beginShot, finishShot, applyPlacement, canRelocate, PHASE, OUT, SAFE_NONE, SAFE_RESET, SAFE_RELOCATE } from '../engine/rules.js';
 import { drawField, drawCoin, drawAim, drawRelocateExclusions, drawFacingGuide, worldPoint, screenX, screenY } from './render.js';
+import { beginPointerDrag, movePointerDrag, pointerDelta } from './pointer.js';
 
 const $ = s => document.querySelector(s);
 const canvas = $('#board'), ctx = canvas.getContext('2d');
 const boardWrap = $('#boardWrap');
 const setupEl = $('#setup');
 const statusEl = $('#status'), hintEl = $('#hint'), playerCards = $('#playerCards'), logEl = $('#log');
-const placementBanner = $('#placementBanner'), confirmPlacement = $('#confirmPlacement');
+const placementBanner = $('#placementBanner'), confirmPlacement = $('#confirmPlacement'), eventFlash = $('#eventFlash');
 const pickerEl = $('#coinPicker'), pickerList = $('#pickerList'), pickerSearch = $('#pickerSearch'), pickerFilters = $('#pickerFilters');
 const coinDefs = await fetch('./data/coins.json').then(r => { if (!r.ok) throw new Error(`coins.json ${r.status}`); return r.json(); });
 
@@ -29,6 +30,7 @@ let drag = null;
 let animating = false;
 let animationFrameId = null;
 let animationGeneration = 0;
+let eventFlashTimer = null;
 let placementDraft = null;
 let setupState = { janken: null, winnerSide: null, sides: null, first: null };
 let selectedCoins = [[3, 4, 2], [15, 16, 14]];
@@ -38,14 +40,14 @@ function coinLabel(c) {
   const split = c.faces.order.ox === c.faces.xtreme.ox ? `${c.faces.order.ox}` : `O ${c.faces.order.ox} / X ${c.faces.xtreme.ox}`;
   return `${c.rarity} ${c.name} — ${split} — ${c.set}`;
 }
-function coinCardHtml(c) {
+function coinCardHtml(c, slot) {
   const meta = c.faces.order.ox !== c.faces.xtreme.ox;
-  return `<div class="coin-card-grid"><div><strong>${c.rarity} ${c.name}</strong>${meta ? ' <span class="pill">META</span>' : ''}<br><span class="sub">${c.set}</span></div><div class="ox">O <strong>${c.faces.order.ox}</strong><br>X <strong>${c.faces.xtreme.ox}</strong></div></div>`;
+  return `<div class="coin-card-grid"><span class="slot-no">0${slot+1}</span><div class="coin-copy"><strong>${c.rarity} ${c.name} ${meta ? '<span class="pill">META</span>' : ''}</strong><span class="sub">${c.set}</span></div><div class="coin-stats"><span class="coin-stat order"><small>ORDER</small><b>${c.faces.order.ox}</b></span><span class="coin-stat xtreme"><small>XTREME</small><b>${c.faces.xtreme.ox}</b></span></div></div>`;
 }
 function renderSelectedCoins() {
   for (const player of [0, 1]) {
     $(`#deck${player}`).innerHTML = selectedCoins[player].map((coinIndex, slot) =>
-      `<button class="coin-card" data-player="${player}" data-slot="${slot}" type="button" aria-label="玩家 ${player + 1} 第 ${slot + 1} 顆硬幣">${coinCardHtml(coinDefs[coinIndex])}</button>`
+      `<button class="coin-card" data-player="${player}" data-slot="${slot}" type="button" aria-label="玩家 ${player + 1} 第 ${slot + 1} 顆硬幣">${coinCardHtml(coinDefs[coinIndex],slot)}</button>`
     ).join('');
     const total = deckTotal(selectedCoins[player].map(i => coinDefs[i]));
     const totalEl = $(`#deckTotal${player}`);
@@ -79,7 +81,7 @@ function renderPicker() {
   const rows = coinDefs.map((c, i) => ({ c, i })).filter(({ c }) => matchesPicker(c));
   pickerList.innerHTML = rows.map(({ c, i }) => {
     const meta = c.faces.order.ox !== c.faces.xtreme.ox;
-    return `<button class="picker-coin" data-coin-index="${i}" type="button"><strong>${c.rarity} ${c.name}${meta ? ' · META' : ''}</strong><div class="values">ORDER ${c.faces.order.ox} ／ XTREME ${c.faces.xtreme.ox}</div><div class="set">${c.set}</div></button>`;
+    return `<button class="picker-coin" data-coin-index="${i}" type="button"><div class="picker-name"><strong><span class="rarity">${c.rarity}</span>${c.name}${meta ? ' <span class="pill">META</span>' : ''}</strong><div class="picker-set">${c.set}</div></div><div class="face-values"><span class="face-value order"><small>ORDER</small><b>${c.faces.order.ox}</b></span><span class="face-value xtreme"><small>XTREME</small><b>${c.faces.xtreme.ox}</b></span></div></button>`;
   }).join('') || '<div class="sub">沒有符合條件的硬幣。</div>';
 }
 function openPicker(player, slot) {
@@ -119,26 +121,42 @@ pickerList.addEventListener('click', ev => {
 });
 renderSelectedCoins();
 
+const setupStepIds = { janken:'jankenStep', side:'sideStep', toss:'tossStep', ready:'startStep' };
+const setupStepOrder = Object.keys(setupStepIds);
+function setSetupStep(step){
+  for(const [name,id] of Object.entries(setupStepIds)) $(`#${id}`).classList.toggle('hidden',name!==step);
+  const current=setupStepOrder.indexOf(step);
+  document.querySelectorAll('[data-flow]').forEach(el=>{
+    const index=setupStepOrder.indexOf(el.dataset.flow);
+    el.classList.toggle('current',index===current);el.classList.toggle('done',index<current);
+  });
+}
+setSetupStep('janken');
+
 document.querySelectorAll('[data-janken]').forEach(b=>b.addEventListener('click',()=>{
   setupState.janken = Number(b.dataset.janken);
+  setupState.winnerSide=null;setupState.sides=null;setupState.first=null;
   document.querySelectorAll('[data-janken]').forEach(x=>x.classList.toggle('primary',x===b));
-  $('#sideStep').classList.remove('hidden');
+  document.querySelectorAll('[data-side]').forEach(x=>x.classList.remove('primary'));
+  setSetupStep('side');
 }));
 document.querySelectorAll('[data-side]').forEach(b=>b.addEventListener('click',()=>{
   if (setupState.janken == null) return;
   setupState.winnerSide = b.dataset.side;
   const loserSide = b.dataset.side === 'order' ? 'xtreme' : 'order';
   setupState.sides = setupState.janken === 0 ? [b.dataset.side, loserSide] : [loserSide, b.dataset.side];
+  setupState.first=null;
   document.querySelectorAll('[data-side]').forEach(x=>x.classList.toggle('primary',x===b));
   $('#tossInfo').textContent = `玩家 ${setupState.janken+1} 選擇 ${b.dataset.side.toUpperCase()}。旋轉該玩家的硬幣；若落下時所選陣營朝上，該玩家先攻。`;
-  $('#tossStep').classList.remove('hidden');
+  setSetupStep('toss');
 }));
 $('#toss').addEventListener('click',()=>{
   const chosenUp = rng() < .5;
   setupState.first = chosenUp ? setupState.janken : 1 - setupState.janken;
   $('#startInfo').innerHTML = `${chosenUp ? '所選陣營朝上' : '相反陣營朝上'} → <strong>玩家 ${setupState.first+1} 先攻</strong>`;
-  $('#startStep').classList.remove('hidden');
+  setSetupStep('ready');
 });
+document.querySelectorAll('[data-setup-back]').forEach(b=>b.addEventListener('click',()=>setSetupStep(b.dataset.setupBack)));
 $('#start').addEventListener('click', startMatch);
 
 function startMatch() {
@@ -157,6 +175,8 @@ function resetSetupFlow({ newSeed = false } = {}) {
   animationGeneration++;
   if (animationFrameId != null) cancelAnimationFrame(animationFrameId);
   animationFrameId = null;
+  if(eventFlashTimer!=null)clearTimeout(eventFlashTimer);
+  eventFlashTimer=null;eventFlash.classList.add('hidden');
   if (newSeed) seed = (Math.random() * 2 ** 32) >>> 0;
   rng = makeRng(seed);
   match = null;
@@ -166,9 +186,7 @@ function resetSetupFlow({ newSeed = false } = {}) {
   setupState = { janken: null, winnerSide: null, sides: null, first: null };
   logEl.innerHTML = '';
   setupEl.classList.remove('hidden');
-  $('#sideStep').classList.add('hidden');
-  $('#tossStep').classList.add('hidden');
-  $('#startStep').classList.add('hidden');
+  setSetupStep('janken');
   document.querySelectorAll('[data-janken],[data-side]').forEach(x => x.classList.remove('primary'));
   renderSelectedCoins();
   updatePlacementUi();
@@ -225,7 +243,12 @@ function updateHud() {
   playerCards.innerHTML = [0, 1].map(owner => {
     const coins = match.world.coins.filter(c => c.owner === owner);
     const alive = coins.filter(c => c.alive).length;
-    const rows = coins.map(c=>`<div class="player ${c.alive ? '' : 'out'}"><div><strong>${c.def.rarity} ${c.def.name}</strong><br><span class="sub">${c.side.toUpperCase()} · ${c.alive?'存活':'OUT'}</span></div><div class="ox">ATK <strong>${attackOX(c)}</strong><br>DEF <strong>${defenceOX(c)}</strong></div></div>`).join('');
+    const rows = coins.map(c=>{
+      const flipped=c.ringUp!==c.side;
+      const stateClass=!c.alive?'out':c.core==='released'?(flipped?'flipped':'unlocked'):'set';
+      const stateLabel=!c.alive?'OUT':c.core==='released'?(flipped?'解鎖＋翻面':'核心解鎖'):'核心鎖定';
+      return `<div class="player ${stateClass}"><div class="player-name"><strong>${c.def.rarity} ${c.def.name}</strong><div class="state-row"><span class="state-badge ${stateClass}">${stateLabel}</span><span class="face-badge ${c.ringUp}">${c.ringUp.toUpperCase()} 朝上</span></div></div><div class="ox">ATK <strong>${attackOX(c)}</strong><br>DEF <strong>${defenceOX(c)}</strong></div></div>`;
+    }).join('');
     return `<section class="team p${owner + 1}"><div class="team-head"><span>玩家 ${owner + 1}</span><span>${alive} / 3</span></div>${rows}</section>`;
   }).join('');
   updatePlacementUi();
@@ -235,8 +258,21 @@ function addLog(s) {
   const d=document.createElement('div'); d.textContent=s; logEl.appendChild(d); logEl.scrollTop=logEl.scrollHeight;
 }
 function resultName(r){ return r===OUT?'OUT':r===SAFE_NONE?'SAFE':r===SAFE_RESET?'SAFE · 回原位':r===SAFE_RELOCATE?'SAFE · 場內重置':r; }
+function showEventFlash(title,detail,flipped=false){
+  if(eventFlashTimer!=null)clearTimeout(eventFlashTimer);
+  eventFlash.replaceChildren();
+  const strong=document.createElement('strong');strong.textContent=title;
+  const span=document.createElement('span');span.textContent=detail;
+  eventFlash.append(strong,span);eventFlash.classList.toggle('flipped',flipped);eventFlash.classList.remove('hidden');
+  eventFlashTimer=setTimeout(()=>eventFlash.classList.add('hidden'),1800);
+}
 function logResolution(shooter, resolutions, events) {
-  for (const e of events.filter(e=>e.type==='release')) addLog(`P${e.coin.owner+1} ${e.coin.def.name}：核心解除${e.flipped?' · 翻面':' · 未翻面'} · hit ${(e.squareness*100).toFixed(0)}%`);
+  const releases=events.filter(e=>e.type==='release');
+  for (const e of releases) addLog(`P${e.coin.owner+1} ${e.coin.def.name}：核心解除${e.flipped?' · 翻面':' · 未翻面'} · hit ${(e.squareness*100).toFixed(0)}%`);
+  if(releases.length){
+    const flipped=releases.some(e=>e.flipped);const names=releases.map(e=>e.coin.def.name).join('、');
+    showEventFlash(flipped?'CORE UNLOCK + FLIP':'CORE UNLOCK',`${names} · ${flipped?'硬幣已翻面':'硬幣未翻面'}`,flipped);
+  }
   for (const {coin,result} of resolutions) {
     const bits=[`P${coin.owner+1} ${coin.def.name}`,coin.core==='released'?'解除':'SET',coin.ringUp!==coin.side?'翻面':'未翻面'];
     if (coin.owner!==shooter.owner && coin.core==='released' && coin.ringUp===coin.side) bits.push(`OX ${attackOX(shooter)} → ${defenceOX(coin)}`);
@@ -246,57 +282,74 @@ function logResolution(shooter, resolutions, events) {
 
 function pointerPos(ev){ const r=canvas.getBoundingClientRect(); return {x:ev.clientX-r.left,y:ev.clientY-r.top}; }
 function hitCoin(p,c){ return Math.hypot(p.x-screenX(view,c.x),p.y-screenY(view,c.y)) <= Math.max(28,C.COIN_RADIUS*view.scale*1.4); }
+function insideCanvas(p){ return p.x>=0&&p.y>=0&&p.x<=canvas.clientWidth&&p.y<=canvas.clientHeight; }
 
 canvas.addEventListener('pointerdown', ev=>{
-  if (!match || animating || match.phase===PHASE.GAME_OVER) return;
-  canvas.setPointerCapture(ev.pointerId);
+  if (!match || drag || animating || match.phase===PHASE.GAME_OVER) return;
   const p=pointerPos(ev);
   if (match.phase===PHASE.AIM) {
     const c=match.world.coins.find(c=>c.alive&&c.owner===match.turn&&hitCoin(p,c));
-    if (c) drag={mode:'aim',coin:c,x:p.x,y:p.y};
+    if (c) drag=beginPointerDrag('aim',ev.pointerId,p,{coin:c});
   } else if (match.phase===PHASE.PLACEMENT) {
     const pl=currentPlacement(); if(!pl) return;
-    if (placementDraft?.stage==='move') drag={mode:'move',coin:pl.coin,x:p.x,y:p.y};
-    else if (placementDraft?.stage==='face') setFacingFromPointer(pl.coin,p);
+    if (placementDraft?.stage==='move') drag=beginPointerDrag('move',ev.pointerId,p,{coin:pl.coin});
+    else if (placementDraft?.stage==='face'&&hitCoin(p,pl.coin)) drag=beginPointerDrag('face',ev.pointerId,p,{coin:pl.coin});
   }
+  if (!drag) return;
+  canvas.setPointerCapture?.(ev.pointerId);
+  ev.preventDefault();
   draw();
 });
-canvas.addEventListener('pointermove', ev=>{
+window.addEventListener('pointermove', ev=>{
   if (!match || animating) return;
   const p=pointerPos(ev);
-  if (drag?.mode==='aim') { drag.x=p.x;drag.y=p.y;draw(); }
+  if (drag && !movePointerDrag(drag,ev.pointerId,p)) return;
+  if (drag?.mode==='aim') { draw(); }
   else if (drag?.mode==='move') {
     const wp=worldPoint(view,p.x,p.y); const pl=currentPlacement();
     if (pl && canRelocate(match,pl.coin,wp.x,wp.y)) { pl.coin.x=wp.x;pl.coin.y=wp.y; placementDraft.valid=true; }
     else placementDraft.valid=false;
     draw();
-  } else if (match.phase===PHASE.PLACEMENT && placementDraft?.stage==='face') { setFacingFromPointer(currentPlacement().coin,p); draw(); }
+  } else if (drag?.mode==='face'||(!drag&&ev.pointerType==='mouse'&&insideCanvas(p)&&match.phase===PHASE.PLACEMENT&&placementDraft?.stage==='face')) {
+    setFacingFromPointer(drag?.coin??currentPlacement().coin,p);draw();
+  }
 });
 function releasePointer(ev) {
   if (canvas.hasPointerCapture?.(ev.pointerId)) canvas.releasePointerCapture(ev.pointerId);
 }
 
-canvas.addEventListener('pointerup', ev=>{
-  if (!match || animating) return;
-  const p=pointerPos(ev);
-  if (drag?.mode==='aim') {
-    const c=drag.coin; const cx=screenX(view,c.x),cy=screenY(view,c.y); const dx=p.x-cx,dy=p.y-cy;
-    const pxLen=Math.hypot(dx,dy); drag=null;
-    if (pxLen<8) { draw(); return; }
-    const power=Math.min(1,pxLen/180); const speed=power*C.MAX_SHOT_SPEED; const len=Math.hypot(dx,dy)||1;
-    shoot(c,-dx/len*speed,-dy/len*speed);
-  } else if (drag?.mode==='move') { drag=null; draw(); updatePlacementUi(); }
-});
+function finishPointerGesture(ev, point=pointerPos(ev)) {
+  if (!match || animating || !drag || drag.pointerId!==ev.pointerId) return;
+  movePointerDrag(drag,ev.pointerId,point);
+  const gesture=drag; drag=null;
+  releasePointer(ev);
+  if (gesture.mode==='aim') {
+    const c=gesture.coin;
+    const delta=pointerDelta(gesture,{x:screenX(view,c.x),y:screenY(view,c.y)},8);
+    if (!delta) { draw(); return; }
+    const power=Math.min(1,delta.distance/180); const speed=power*C.MAX_SHOT_SPEED;
+    shoot(c,-delta.dx/delta.distance*speed,-delta.dy/delta.distance*speed);
+  } else if (gesture.mode==='move') { draw(); updatePlacementUi(); }
+  else if (gesture.mode==='face') {
+    if(pointerDelta(gesture,{x:gesture.startX,y:gesture.startY},12)===null){draw();return;}
+    setFacingFromPointer(gesture.coin,gesture);
+    commitCurrentPlacement();
+  }
+}
+window.addEventListener('pointerup', finishPointerGesture);
 
 function cancelPointer(ev) {
+  if (!drag || drag.pointerId!==ev.pointerId) return;
   releasePointer(ev);
   drag = null;
   draw();
   updatePlacementUi();
 }
-canvas.addEventListener('pointercancel', cancelPointer);
-canvas.addEventListener('lostpointercapture', () => {
-  if (drag) { drag = null; draw(); updatePlacementUi(); }
+window.addEventListener('pointercancel', cancelPointer);
+canvas.addEventListener('lostpointercapture', ev => {
+  if (drag?.pointerId===ev.pointerId && ev.buttons===0) {
+    finishPointerGesture(ev,{x:drag.x,y:drag.y});
+  }
 });
 boardWrap.addEventListener('touchmove', ev => ev.preventDefault(), { passive: false });
 for (const eventName of ['gesturestart', 'gesturechange', 'gestureend']) {
@@ -334,21 +387,35 @@ function enterPlacement(){
   else { const p=findLegalRelocation(pl.coin);pl.coin.x=p.x;pl.coin.y=p.y;placementDraft={stage:'move',valid:true}; }
 }
 function setFacingFromPointer(coin,p){ coin.theta=Math.atan2(p.y-screenY(view,coin.y),p.x-screenX(view,coin.x)); }
-function updatePlacementUi(){
-  const pl=currentPlacement(); const active=match?.phase===PHASE.PLACEMENT&&pl;
-  placementBanner.classList.toggle('hidden',!active);confirmPlacement.classList.toggle('hidden',!active);
-  if(!active)return;
-  if(pl.kind===SAFE_RELOCATE&&placementDraft?.stage==='move'){
-    placementBanner.textContent=`P${match.turn+1}：拖曳 ${pl.coin.def.name} 到場內（與其他硬幣中心至少 86mm）`;
-    confirmPlacement.textContent='確定位置';confirmPlacement.disabled=!placementDraft.valid;
-  }else{placementBanner.textContent=`P${match.turn+1}：選擇 ${pl.coin.def.name} 的リバースイッチ朝向`;confirmPlacement.textContent='確定朝向';confirmPlacement.disabled=false;}
-}
-confirmPlacement.addEventListener('click',()=>{
+function commitCurrentPlacement(){
   const pl=currentPlacement();if(!pl)return;
-  if(pl.kind===SAFE_RELOCATE&&placementDraft.stage==='move'){placementDraft.stage='face';updatePlacementUi();draw();return;}
   applyPlacement(match,pl,{x:pl.coin.x,y:pl.coin.y,theta:pl.coin.theta});
   if(match.phase===PHASE.PLACEMENT)enterPlacement();else placementDraft=null;
   updateHud();draw();
+}
+function confirmPlacementStep(){
+  const pl=currentPlacement();if(!pl)return;
+  if(pl.kind===SAFE_RELOCATE&&placementDraft?.stage==='move'){
+    if(!placementDraft.valid)return;
+    placementDraft.stage='face';updatePlacementUi();draw();return;
+  }
+  commitCurrentPlacement();
+}
+function updatePlacementUi(){
+  const pl=currentPlacement(); const active=match?.phase===PHASE.PLACEMENT&&pl;
+  const moving=active&&pl.kind===SAFE_RELOCATE&&placementDraft?.stage==='move';
+  placementBanner.classList.toggle('hidden',!active);confirmPlacement.classList.toggle('hidden',!moving);
+  if(!active)return;
+  if(moving){
+    placementBanner.textContent=`P${match.turn+1}：拖曳 ${pl.coin.def.name} 到場內（與其他硬幣中心至少 86mm）`;
+    confirmPlacement.textContent='確定位置';confirmPlacement.disabled=!placementDraft.valid;
+  }else{placementBanner.textContent=`P${match.turn+1}：指向／拖向 ${pl.coin.def.name} 的リバースイッチ朝向，放手或按 Space 確定`;}
+}
+confirmPlacement.addEventListener('click',confirmPlacementStep);
+document.addEventListener('keydown',ev=>{
+  if(ev.code!=='Space'||ev.repeat||ev.target.closest?.('input,textarea,select,button,[contenteditable="true"]'))return;
+  if(match?.phase!==PHASE.PLACEMENT)return;
+  ev.preventDefault();confirmPlacementStep();
 });
 
 function buildDev(){
