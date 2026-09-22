@@ -1,10 +1,20 @@
 import { C } from '../engine/constants.js';
-import { other } from '../engine/coins.js';
 
 export const px = (view, mm) => mm * view.scale;
 export const screenX = (view, mm) => view.ox + mm * view.scale;
 export const screenY = (view, mm) => view.oy + mm * view.scale;
 export const worldPoint = (view, x, y) => ({ x: (x - view.ox) / view.scale, y: (y - view.oy) / view.scale });
+
+export function coinVisualState(coin) {
+  const released = coin.core === 'released';
+  const flipped = coin.ringUp !== coin.side;
+  return {
+    released,
+    flipped,
+    faceSide: coin.ringUp,
+    state: !released ? 'locked' : flipped ? 'flipped' : 'unlocked',
+  };
+}
 
 export function drawField(ctx, view) {
   const x = screenX(view, 0), y = screenY(view, 0);
@@ -50,21 +60,27 @@ export function drawCoin(ctx, view, coin, { dim = false, selected = false } = {}
   if (!coin.alive) return;
   const r = px(view, C.COIN_RADIUS);
   const cx = screenX(view, coin.x), cy = screenY(view, coin.y);
-  const white = coin.ringUp === 'order';
-  const released = coin.core === 'released';
-  const flipped = coin.ringUp !== coin.side;
-  const faceSide = coin.core === 'released' ? other(coin.side) : coin.side;
+  const { released, flipped, faceSide } = coinVisualState(coin);
+  const white = faceSide === 'order';
   const face = coin.def.faces[faceSide];
 
   ctx.save();
   ctx.globalAlpha = dim ? .35 : 1;
   ctx.translate(cx, cy);
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.beginPath();ctx.ellipse(r*.12,r*.18,r*1.08,r*.94,0,0,Math.PI*2);ctx.fill();
-  if (selected || released) { ctx.shadowColor = released ? '#f5c84c' : (coin.owner===0?'#ef5147':'#3b8ef7'); ctx.shadowBlur = released ? 26 : 16; }
+  if (selected || released) {
+    ctx.shadowColor = released ? (flipped ? '#ff5f57' : '#f5c84c') : (coin.owner===0?'#ef5147':'#3b8ef7');
+    ctx.shadowBlur = released ? 26 : 16;
+  }
 
   if(released){
-    ctx.strokeStyle='#f5c84c';ctx.lineWidth=Math.max(2,r*.12);ctx.setLineDash([Math.max(3,r*.25),Math.max(2,r*.16)]);
-    ctx.beginPath();ctx.arc(0,0,r*1.16,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+    ctx.strokeStyle=flipped?'#ff5f57':'#f5c84c';ctx.lineWidth=Math.max(2.5,r*.14);
+    if(!flipped)ctx.setLineDash([Math.max(3,r*.25),Math.max(2,r*.16)]);
+    ctx.beginPath();ctx.arc(0,0,r*1.18,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+    if(flipped){
+      ctx.strokeStyle='#fff2ef';ctx.lineWidth=Math.max(1,r*.055);
+      ctx.beginPath();ctx.arc(0,0,r*1.34,0,Math.PI*2);ctx.stroke();
+    }
   }
 
   ctx.save();
@@ -75,7 +91,7 @@ export function drawCoin(ctx, view, coin, { dim = false, selected = false } = {}
 
   ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2);
   ctx.fillStyle = white ? '#e8ebef' : '#252a31'; ctx.fill();
-  ctx.strokeStyle = released ? '#f5c84c' : selected ? (coin.owner===0?'#ef5147':'#3b8ef7') : (white ? '#9da5ae' : '#080a0d');
+  ctx.strokeStyle = released ? (flipped ? '#ff5f57' : '#f5c84c') : selected ? (coin.owner===0?'#ef5147':'#3b8ef7') : (white ? '#9da5ae' : '#080a0d');
   ctx.lineWidth = released || selected ? 3 : 1.5; ctx.stroke();
 
   for (let i = 0; i < 18; i++) {
@@ -89,11 +105,11 @@ export function drawCoin(ctx, view, coin, { dim = false, selected = false } = {}
 
   ctx.beginPath(); ctx.arc(0, 0, r * .66, 0, Math.PI * 2);
   ctx.fillStyle = faceSide === 'order' ? '#b93731' : '#275d9c'; ctx.fill();
-  ctx.strokeStyle = released ? '#f5c84c' : '#111820';
+  ctx.strokeStyle = released ? (flipped ? '#ff5f57' : '#f5c84c') : '#111820';
   ctx.lineWidth = released ? 3 : 1.2; ctx.stroke();
 
   ctx.beginPath();ctx.arc(0,-r*.2,r*.14,0,Math.PI*2);
-  ctx.fillStyle=released?'#f5c84c':'#11110f';ctx.fill();
+  ctx.fillStyle=released?(flipped?'#ff5f57':'#f5c84c'):'#11110f';ctx.fill();
   if(released){
     ctx.strokeStyle='#fff4c2';ctx.lineWidth=Math.max(1,r*.055);
     for(let i=0;i<4;i++){const a=i*Math.PI/2;ctx.beginPath();ctx.moveTo(Math.cos(a)*r*.2,-r*.2+Math.sin(a)*r*.2);ctx.lineTo(Math.cos(a)*r*.3,-r*.2+Math.sin(a)*r*.3);ctx.stroke();}
@@ -112,6 +128,21 @@ export function drawCoin(ctx, view, coin, { dim = false, selected = false } = {}
     if (coin.def.faces.order.ox !== coin.def.faces.xtreme.ox) {
       ctx.fillStyle = '#f4cf48'; ctx.fillText('M', r * .38, -r * .38);
     }
+  }
+
+  if (released) {
+    const label = flipped ? '翻面' : '解鎖';
+    const fontSize = Math.max(9, Math.min(12, r * .42));
+    ctx.font = `900 ${fontSize}px system-ui,sans-serif`;
+    const labelWidth = Math.max(28, ctx.measureText(label).width + 10);
+    const labelHeight = fontSize + 7;
+    const labelX = -labelWidth / 2;
+    const labelY = -r * 1.72;
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = flipped ? '#ff5f57' : '#f5c84c';
+    ctx.beginPath();ctx.roundRect(labelX,labelY,labelWidth,labelHeight,3);ctx.fill();
+    ctx.fillStyle = '#140d08';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(label,0,labelY+labelHeight/2+.5);
   }
 
   ctx.restore();
