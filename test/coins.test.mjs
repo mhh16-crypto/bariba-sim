@@ -50,10 +50,11 @@ test('ids are unique', () => {
   assert.equal(new Set(coins.map(c => c.id)).size, coins.length);
 });
 
-import { other, attackOX, defenceOX, isMeta, makeCoin, deckOX, deckTotal } from '../engine/coins.js';
+import { other, attackOX, defenceOX, isMeta, makeCoin, deckOX, deckTotal, canSelectDeckCoin } from '../engine/coins.js';
 
 const leo = coins.find(c => c.name === 'レオウ' && c.rarity === 'BR');
 const flat = coins.find(c => c.name === 'ニャルバン' && c.rarity === 'BBR' && c.set.includes('第1転'));
+const synthetic = ox => ({ faces: { order: { ox }, xtreme: { ox } } });
 
 test('other() flips the side', () => {
   assert.equal(other('order'), 'xtreme');
@@ -105,4 +106,16 @@ test('Expert deck total sums all three selected coins', () => {
     coins.find(c => c.name === 'イグルス' && c.rarity === 'BR' && c.set.includes('第1転')),
   ];
   assert.equal(deckTotal(deck), 15000);
+});
+
+test('coin picker reserves enough OX for every remaining empty slot', () => {
+  const deck = [synthetic(8000), null, null];
+  assert.equal(canSelectDeckCoin(deck, 1, synthetic(6500), 15000, 500), true);
+  assert.equal(canSelectDeckCoin(deck, 1, synthetic(6501), 15000, 500), false);
+});
+
+test('coin picker excludes the current slot when replacing a coin', () => {
+  const deck = [synthetic(8000), synthetic(7000), null];
+  assert.equal(canSelectDeckCoin(deck, 0, synthetic(8000)), true);
+  assert.equal(canSelectDeckCoin(deck, 0, synthetic(8001)), false);
 });

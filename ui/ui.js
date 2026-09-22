@@ -1,6 +1,6 @@
 import { C, FLIP } from '../engine/constants.js';
 import { makeRng } from '../engine/rng.js';
-import { attackOX, defenceOX, deckTotal } from '../engine/coins.js';
+import { attackOX, defenceOX, deckOX, deckTotal, canSelectDeckCoin } from '../engine/coins.js';
 import { stepWorld, atRest } from '../engine/physics.js';
 import { newMatch, beginShot, finishShot, applyPlacement, canRelocate, PHASE, OUT, SAFE_NONE, SAFE_RESET, SAFE_RELOCATE } from '../engine/rules.js';
 import { drawField, drawCoin, drawAim, drawRelocateExclusions, drawFacingGuide, worldPoint, screenX, screenY } from './render.js';
@@ -14,6 +14,7 @@ const statusEl = $('#status'), hintEl = $('#hint'), playerCards = $('#playerCard
 const placementBanner = $('#placementBanner'), confirmPlacement = $('#confirmPlacement'), eventFlash = $('#eventFlash');
 const pickerEl = $('#coinPicker'), pickerList = $('#pickerList'), pickerSearch = $('#pickerSearch'), pickerFilters = $('#pickerFilters');
 const coinDefs = await fetch('./data/coins.json').then(r => { if (!r.ok) throw new Error(`coins.json ${r.status}`); return r.json(); });
+const minimumCoinOX = Math.min(...coinDefs.map(deckOX));
 
 if (new URLSearchParams(location.search).has('test')) {
   const { runBrowserTests } = await import('../test/browser.js');
@@ -33,7 +34,7 @@ let animationGeneration = 0;
 let eventFlashTimer = null;
 let placementDraft = null;
 let setupState = { janken: null, winnerSide: null, sides: null, first: null };
-let selectedCoins = [[3, 4, 2], [15, 16, 14]];
+let selectedCoins = [[null, null, null], [null, null, null]];
 let pickerState = { player: null, slot: null, query: '', rarity: 'ALL' };
 
 function coinLabel(c) {
@@ -44,21 +45,27 @@ function coinCardHtml(c, slot) {
   const meta = c.faces.order.ox !== c.faces.xtreme.ox;
   return `<div class="coin-card-grid"><span class="slot-no">0${slot+1}</span><div class="coin-copy"><strong>${c.rarity} ${c.name} ${meta ? '<span class="pill">META</span>' : ''}</strong><span class="sub">${c.set}</span></div><div class="coin-stats"><span class="coin-stat order"><small>ORDER</small><b>${c.faces.order.ox}</b></span><span class="coin-stat xtreme"><small>XTREME</small><b>${c.faces.xtreme.ox}</b></span></div></div>`;
 }
+function emptyCoinCardHtml(slot) {
+  return `<div class="coin-card-grid"><span class="slot-no">0${slot+1}</span><div class="coin-copy"><strong>選擇硬幣</strong><span class="sub">尚未選擇</span></div></div>`;
+}
+const selectedDefs = deck => deck.filter(Number.isInteger).map(index => coinDefs[index]);
+
 function renderSelectedCoins() {
   for (const player of [0, 1]) {
     $(`#deck${player}`).innerHTML = selectedCoins[player].map((coinIndex, slot) =>
-      `<button class="coin-card" data-player="${player}" data-slot="${slot}" type="button" aria-label="玩家 ${player + 1} 第 ${slot + 1} 顆硬幣">${coinCardHtml(coinDefs[coinIndex],slot)}</button>`
+      `<button class="coin-card${Number.isInteger(coinIndex)?'':' empty'}" data-player="${player}" data-slot="${slot}" type="button" aria-label="玩家 ${player + 1} 第 ${slot + 1} 顆硬幣">${Number.isInteger(coinIndex)?coinCardHtml(coinDefs[coinIndex],slot):emptyCoinCardHtml(slot)}</button>`
     ).join('');
-    const total = deckTotal(selectedCoins[player].map(i => coinDefs[i]));
+    const defs = selectedDefs(selectedCoins[player]);
+    const total = deckTotal(defs);
     const totalEl = $(`#deckTotal${player}`);
-    totalEl.textContent = `Deck OX ${total.toLocaleString()} / 15,000`;
+    totalEl.textContent = `Deck OX ${total.toLocaleString()} / 15,000 · ${defs.length}/3`;
     totalEl.classList.toggle('invalid', total > 15000);
   }
   updateStartAvailability();
 }
 
 function decksAreValid() {
-  return selectedCoins.every(deck => deck.length === 3 && deckTotal(deck.map(i => coinDefs[i])) <= 15000);
+  return selectedCoins.every(deck => deck.every(Number.isInteger) && deckTotal(selectedDefs(deck)) <= 15000);
 }
 
 function updateStartAvailability() {
@@ -74,6 +81,10 @@ function matchesPicker(c) {
   const meta = c.faces.order.ox !== c.faces.xtreme.ox;
   if (pickerState.rarity === 'META' && !meta) return false;
   if (!['ALL', 'META'].includes(pickerState.rarity) && c.rarity !== pickerState.rarity) return false;
+  if (pickerState.player != null && pickerState.slot != null) {
+    const deck = selectedCoins[pickerState.player].map(index => Number.isInteger(index) ? coinDefs[index] : null);
+    if (!canSelectDeckCoin(deck, pickerState.slot, c, 15000, minimumCoinOX)) return false;
+  }
   return !q || [c.name, c.rarity, c.set, ...(c.variants || [])].join(' ').toLowerCase().includes(q);
 }
 function renderPicker() {

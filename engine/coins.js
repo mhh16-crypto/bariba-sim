@@ -15,6 +15,13 @@ export const deckOX = def => (def.faces.order.ox + def.faces.xtreme.ox) / 2;
 
 export const deckTotal = defs => defs.reduce((sum, def) => sum + deckOX(def), 0);
 
+export function canSelectDeckCoin(deck, slot, candidate, limit = 15000, minimumCoinOX = 0) {
+  const nextDeck = deck.map((def, index) => index === slot ? candidate : def);
+  const selected = nextDeck.filter(Boolean);
+  const remainingSlots = nextDeck.length - selected.length;
+  return deckTotal(selected) + remainingSlots * minimumCoinOX <= limit;
+}
+
 export function makeCoin(def, owner, side, x, y, theta) {
   return {
     def, owner, side,
